@@ -6,7 +6,13 @@
       "Read(//c/Users/lKira/**)",
       "Bash(netstat:*)",
       "Bash(findstr:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nSpring Boot 웹 푸시 알림 MVP 구현\n\nAndroid 우선 웹 푸시 알림 시스템 초기 구현\n- VAPID 인증 기반 웹 푸시 알림 기능\n- 구독 관리 (subscribe/unsubscribe) API\n- 푸시 메시지 발송 및 로그 트래킹\n- MariaDB 기반 데이터 저장소\n- 디바이스 타입별 필터링 지원\n- Service Worker 기반 클라이언트 구현\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(gradlew.bat bootRun:*)",
+      "Bash(./gradlew.bat:*)",
+      "Bash(cmd:*)",
+      "Bash(timeout:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nUI 개선 및 푸시 알림 안정화\n\nTailwind CSS 적용 및 Service Worker 개선\n- Tailwind CSS CDN으로 현대적인 UI 디자인 적용\n- 반응형 레이아웃 및 그라데이션 배경\n- Service Worker 안전한 데이터 파싱 (JSON/텍스트 폴백)\n- 향상된 디버깅 로그 (클라이언트/서버)\n- Edge 브라우저 호환성 개선 (절대 경로 URL)\n- 푸시 발송 상태 코드 및 응답 본문 로깅\n- deviceType null로 전체 구독자 발송\n- TTL 60초, urgency high로 긴급 푸시 설정\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": [],
     "ask": []
