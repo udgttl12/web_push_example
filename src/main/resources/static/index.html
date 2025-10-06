@@ -4,192 +4,96 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>웹 푸시 알림 MVP</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            500: '#667eea',
+                            600: '#5568d3',
+                            700: '#4c51bf'
+                        }
+                    }
+                }
+            }
         }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 500px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-
-        h1 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 28px;
-        }
-
-        .subtitle {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 14px;
-        }
-
-        .status {
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-
-        .status.info {
-            background: #e3f2fd;
-            color: #1976d2;
-        }
-
-        .status.success {
-            background: #e8f5e9;
-            color: #388e3c;
-        }
-
-        .status.error {
-            background: #ffebee;
-            color: #c62828;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-bottom: 10px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-secondary {
-            background: #f5f5f5;
-            color: #333;
-        }
-
-        .btn-secondary:hover {
-            background: #e0e0e0;
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .test-form {
-            margin-top: 30px;
-            padding-top: 30px;
-            border-top: 2px solid #f5f5f5;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #666;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        input, textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-
-        input:focus, textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        .device-info {
-            margin-top: 20px;
-            padding: 15px;
-            background: #f5f5f5;
-            border-radius: 10px;
-            font-size: 12px;
-            color: #666;
-        }
-    </style>
+    </script>
 </head>
-<body>
-    <div class="container">
-        <h1>🔔 웹 푸시 알림 MVP</h1>
-        <p class="subtitle">안드로이드 우선 웹 푸시 알림 테스트</p>
+<body class="bg-gradient-to-br from-purple-500 via-purple-600 to-indigo-700 min-h-screen flex items-center justify-center p-4 sm:p-6">
+    <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-10 w-full max-w-lg">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-2 flex items-center gap-3">
+                <span class="text-4xl">🔔</span>
+                웹 푸시 알림 MVP
+            </h1>
+            <p class="text-gray-500 text-sm sm:text-base">안드로이드 우선 웹 푸시 알림 테스트</p>
+        </div>
 
-        <div id="status" class="status info">
+        <!-- Status Alert -->
+        <div id="status" class="p-4 rounded-xl mb-6 text-sm sm:text-base bg-blue-50 text-blue-700 border border-blue-200">
             알림 권한 상태를 확인하는 중...
         </div>
 
-        <button id="subscribeBtn" class="btn btn-primary" disabled>
+        <!-- Subscribe Button -->
+        <button id="subscribeBtn"
+                class="w-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-semibold py-4 px-6 rounded-xl hover:from-purple-600 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 mb-3"
+                disabled>
             알림 구독하기
         </button>
 
-        <button id="unsubscribeBtn" class="btn btn-secondary" style="display: none;">
+        <!-- Unsubscribe Button -->
+        <button id="unsubscribeBtn"
+                class="hidden w-full bg-gray-100 text-gray-700 font-semibold py-4 px-6 rounded-xl hover:bg-gray-200 transition-all duration-300">
             구독 해지
         </button>
 
-        <div class="test-form">
-            <h3 style="margin-bottom: 15px; color: #333;">테스트 알림 보내기</h3>
+        <!-- Test Form -->
+        <div class="mt-8 pt-8 border-t-2 border-gray-100">
+            <h3 class="text-xl font-bold text-gray-800 mb-6">테스트 알림 보내기</h3>
 
-            <div class="form-group">
-                <label for="title">제목</label>
-                <input type="text" id="title" placeholder="알림 제목을 입력하세요" value="테스트 알림">
+            <div class="space-y-5">
+                <div>
+                    <label for="title" class="block text-sm font-medium text-gray-700 mb-2">제목</label>
+                    <input type="text"
+                           id="title"
+                           placeholder="알림 제목을 입력하세요"
+                           value="테스트 알림"
+                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all outline-none">
+                </div>
+
+                <div>
+                    <label for="body" class="block text-sm font-medium text-gray-700 mb-2">내용</label>
+                    <textarea id="body"
+                              placeholder="알림 내용을 입력하세요"
+                              rows="3"
+                              class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all outline-none resize-y">안녕하세요! 웹 푸시 알림 테스트입니다.</textarea>
+                </div>
+
+                <div>
+                    <label for="url" class="block text-sm font-medium text-gray-700 mb-2">클릭 시 이동할 URL (선택)</label>
+                    <input type="text"
+                           id="url"
+                           placeholder="https://example.com"
+                           value="/"
+                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all outline-none">
+                </div>
+
+                <button id="sendTestBtn"
+                        class="w-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-semibold py-4 px-6 rounded-xl hover:from-purple-600 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
+                    📨 테스트 알림 전송
+                </button>
             </div>
-
-            <div class="form-group">
-                <label for="body">내용</label>
-                <textarea id="body" placeholder="알림 내용을 입력하세요">안녕하세요! 웹 푸시 알림 테스트입니다.</textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="url">클릭 시 이동할 URL (선택)</label>
-                <input type="text" id="url" placeholder="https://example.com" value="/">
-            </div>
-
-            <button id="sendTestBtn" class="btn btn-primary">
-                테스트 알림 전송
-            </button>
         </div>
 
-        <div class="device-info">
-            <strong>디바이스 정보:</strong><br>
-            <span id="deviceInfo">로딩 중...</span>
+        <!-- Device Info -->
+        <div class="mt-6 p-4 bg-gray-50 rounded-xl">
+            <p class="text-xs sm:text-sm text-gray-600">
+                <strong class="text-gray-800">디바이스 정보:</strong><br>
+                <span id="deviceInfo" class="text-gray-500">로딩 중...</span>
+            </p>
         </div>
     </div>
 

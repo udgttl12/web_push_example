@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import nl.martijndwars.webpush.Notification;
 import nl.martijndwars.webpush.PushService;
+import org.apache.http.HttpResponse;
+import org.apache.http.util.EntityUtils;
 import org.jose4j.lang.JoseException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,11 +63,14 @@ public class WebPushService {
                 ? subscriptionService.getActiveSubscriptionsByDeviceType(deviceType)
                 : subscriptionService.getActiveSubscriptions();
 
+        System.out.println("[WebPush] Found " + subscriptions.size() + " active subscriptions");
+
         message.setStatus("sending");
         message.setSentAt(LocalDateTime.now());
         messageRepository.save(message);
 
         for (PushSubscription subscription : subscriptions) {
+            System.out.println("[WebPush] Sending to subscription ID: " + subscription.getId());
             sendToSubscription(message, subscription);
         }
 
@@ -75,7 +80,6 @@ public class WebPushService {
 
     private void sendToSubscription(PushMessage message, PushSubscription subscription) {
         try {
-            // Prepare notification payload
             Map<String, Object> payload = new HashMap<>();
             payload.put("title", message.getTitle());
             payload.put("body", message.getBody());
@@ -87,8 +91,8 @@ public class WebPushService {
             payload.put("requireInteraction", message.getRequireInteraction());
 
             String payloadJson = objectMapper.writeValueAsString(payload);
+            System.out.println("[WebPush] Payload: " + payloadJson);
 
-            // Create notification
             Notification notification = new Notification(
                     subscription.getEndpoint(),
                     subscription.getP256dhKey(),
@@ -96,23 +100,42 @@ public class WebPushService {
                     payloadJson.getBytes()
             );
 
-            // Send notification
-            pushService.send(notification);
+            System.out.println("[WebPush] Sending to endpoint: " + subscription.getEndpoint().substring(0, 50) + "...");
 
-            // Log success
+            HttpResponse response = pushService.send(notification);
+            int statusCode = response.getStatusLine().getStatusCode();
+            String responseBody = null;
+            if (response.getEntity() != null) {
+                responseBody = EntityUtils.toString(response.getEntity());
+            }
+
+            if (responseBody != null && !responseBody.isBlank()) {
+                System.out.println("[WebPush] Response status=" + statusCode + " body=" + responseBody);
+            } else {
+                System.out.println("[WebPush] Response status=" + statusCode);
+            }
+
+            boolean success = statusCode >= 200 && statusCode < 300;
+
             PushSendLog log = PushSendLog.builder()
                     .messageId(message.getId())
                     .subscriptionId(subscription.getId())
-                    .status("success")
-                    .statusCode(201)
+                    .status(success ? "success" : "failed")
+                    .statusCode(statusCode)
+                    .errorMessage(success ? null : responseBody)
                     .build();
             sendLogRepository.save(log);
 
-            // Update last sent time
-            subscription.setLastSentAt(LocalDateTime.now());
+            if (success) {
+                subscription.setLastSentAt(LocalDateTime.now());
+            } else if (statusCode == 410) {
+                subscription.setIsActive(false);
+            }
 
         } catch (GeneralSecurityException | IOException | JoseException | ExecutionException | InterruptedException e) {
-            // Log failure
+            System.err.println("[WebPush] Failed to send push to subscription ID " + subscription.getId() + ": " + e.getMessage());
+            e.printStackTrace();
+
             PushSendLog log = PushSendLog.builder()
                     .messageId(message.getId())
                     .subscriptionId(subscription.getId())
@@ -121,7 +144,6 @@ public class WebPushService {
                     .build();
             sendLogRepository.save(log);
 
-            // Deactivate subscription if it's expired (410 Gone)
             if (e.getMessage() != null && e.getMessage().contains("410")) {
                 subscription.setIsActive(false);
             }
