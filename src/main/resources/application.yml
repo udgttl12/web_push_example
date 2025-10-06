@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: web-push-mvp
+
+  web:
+    locale: ko_KR
+    locale-resolver: fixed
+
+  datasource:
+    url: jdbc:mariadb://localhost:3306/push_mvp
+    username: app
+    password: app123
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MariaDBDialect
+
+  sql:
+    init:
+      mode: never
+      schema-locations: classpath:db/schema.sql
+
+server:
+  port: 8080
+
+# Web Push VAPID 설정
+web-push:
+  vapid:
+    # 아래는 테스트용 키입니다. 프로덕션에서는 반드시 새로 생성하세요!
+    # 생성 방법: https://vapidkeys.com/ 또는 web-push generate-vapid-keys 명령어
+    public-key: BJmE7TPTSLkOouWzVfCgjxE96XL0057TJ2fCHTHvCq_xssXxTLA4QrgNNj4UCOrkKBrRTf_iAotnw1Of_mlKtFg
+    private-key: DLmZxvf0uxxn4B190vkXEvooqPZ6-bLwAL-cCt6wo7E
+    subject: mailto:udgttl12@naver.com

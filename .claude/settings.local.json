@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gradlew wrapper:*)",
+      "Bash(./gradlew.bat wrapper:*)",
+      "Read(//c/Users/lKira/**)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
